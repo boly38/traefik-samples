@@ -1,0 +1,22 @@
+[global]
+  sendAnonymousUsage = false
+
+[providers]
+  [providers.docker]
+    endpoint = "unix:///var/run/docker.sock"
+    watch = true
+    exposedByDefault = false
+    swarmMode = false
+    defaultRule = "PathPrefix(`/{{ .Name}}/`)"
+    network = "middleware"
+
+[api]
+  insecure = true
+  dashboard = true
+  debug = false
+
+[entryPoints]
+  [entryPoints.traefik]
+    address = ":8001"
+  [entryPoints.services]
+    address = ":8080"

@@ -1,0 +1,38 @@
+version: '3.7'
+
+networks:
+    default:
+        external:
+            name: gateway
+    middleware:
+        driver: bridge
+
+services:
+
+    site1:
+        image: nginx
+        networks:
+            - default
+            - middleware
+        volumes:
+            - ./wwwsite1:/usr/share/nginx/html:ro
+        labels:
+            - traefik.enable=true
+            - traefik.http.services.site1.loadbalancer.server.port=80
+            - traefik.http.routers.site1.rule=PathPrefix(`/site1`)
+            - traefik.http.routers.site1.service=site1
+            - "traefik.http.middlewares.site1-stripprefix.stripprefix.prefixes=/site1"
+            - "traefik.http.routers.site1.middlewares=site1-stripprefix@docker"
+
+    site2:
+        image: nginx
+        networks:
+            - default
+            - middleware
+        volumes:
+            - ./wwwsite2:/usr/share/nginx/html:ro
+        labels:
+            - traefik.enable=true
+            - traefik.http.services.site2.loadbalancer.server.port=80
+            - traefik.http.routers.site2.rule=PathPrefix(`/site2`)
+            - traefik.http.routers.site2.service=site2
